@@ -406,7 +406,29 @@ DBusHandlerResult handle_property_get(DBusConnection *connection, DBusMessage *m
 
 
 DBusHandlerResult handle_property_set(DBusConnection *connection, DBusMessage *message) {
+    // for now, all properties are read-only
+    const char *msig = dbus_message_get_signature(message);
+    DBusError derr;
+    dbus_error_init(&derr);
+    if( strcmp(msig, "ssv") == 0 ) {
+        char *v_IFACE_NAME = NULL;
+        char *v_PROP_NAME = NULL;
+        dbus_bool_t resb = dbus_message_get_args(message, &derr,
+            DBUS_TYPE_STRING, &v_IFACE_NAME,
+            DBUS_TYPE_STRING, &v_PROP_NAME,
+            DBUS_TYPE_INVALID );
+        if( resb == FALSE ) {
+            printf("ERROR: handle_property_set(): Failed to get message args!\n");
+            error_reply_read_only_prop(connection, message, "whatever");
+        } else {
+            printf("  Property Set \"%s\": replying is read-only\n", v_PROP_NAME);
+            error_reply_read_only_prop(connection, message, v_PROP_NAME);
+        }
+    } else {
+        printf("ERROR: handle_property_set(): incorrect signature: [%s]\n", msig);
+        error_reply_read_only_prop(connection, message, "whatever");
+    }
     dbus_message_unref(message);
-    return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+    return DBUS_HANDLER_RESULT_HANDLED;
 }
 

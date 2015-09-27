@@ -15,5 +15,6 @@ DBusHandlerResult handle_property_get_all(DBusConnection *connection, DBusMessag
 
 void error_reply_unknown_property(DBusConnection *connection, DBusMessage *message, const char *prop_name);
 void error_reply_unknown_interface(DBusConnection *connection, DBusMessage *message, const char *iface);
+void error_reply_read_only_prop(DBusConnection *connection, DBusMessage *message, const char *prop_name);
 
 #endif
