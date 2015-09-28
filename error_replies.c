@@ -43,6 +43,17 @@ void error_reply_unknown_interface(DBusConnection *connection, DBusMessage *mess
 }
 
 
+void error_reply_invalid_args(DBusConnection *connection, DBusMessage *message) {
+    DBusMessage *reply = dbus_message_new_error(message, DBUS_ERROR_INVALID_ARGS, "Invalid arguments!");
+    if( !reply ) return;
+    dbus_bool_t ret = dbus_connection_send(connection, reply, NULL);
+    if( ret == FALSE ) {
+        printf("ERROR: error_reply_unknown_interface: could not send reply!\n");
+    }
+    dbus_message_unref(reply);
+}
+
+
 void error_reply_read_only_prop(DBusConnection *connection, DBusMessage *message, const char *prop_name) {
     char error_message[256] = {0};
     snprintf(error_message, sizeof(error_message)-1, "property: %s", prop_name);
