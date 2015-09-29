@@ -1,0 +1,21 @@
+cmake_minimum_required(VERSION 2.8)
+
+# find dbus
+find_package(PkgConfig QUIET)
+if(PKG_CONFIG_FOUND)
+	pkg_check_modules(DBUS dbus-1)
+	if(${DBUS_FOUND})
+		message("--   Found: ${DBUS_FOUND}")
+		message("--   DBUS_INCLUDE_DIRS: ${DBUS_INCLUDE_DIRS}")
+		message("--   DBUS_LIBRARIES: ${DBUS_LIBRARIES}")
+	else()
+		message(SEND_ERROR "Failed to find libdbus (dbus-1)!")
+	endif()
+else()
+	message(SEND_ERROR "Failed to find pkg-config!")
+	return()
+endif()
+
+include_directories(${DBUS_INCLUDE_DIRS})
+add_executable(test_dbus test_dbus.c handlers.c error_replies.c)
+target_link_libraries(test_dbus ${DBUS_LIBRARIES})
